@@ -32,7 +32,7 @@ router.get('/', function (req, res, next) {
       imageLink: "https://static.nike.com/a/images/t_PDP_1728_v1/f_auto,q_auto:eco/fc4622c4-2769-4665-aa6e-42c974a7705e/AIR+FORCE+1+%2707.png"
     }
   ]
-  res.render('index', { products });
+  res.render('index', { products});
 });
 
 module.exports = router;
