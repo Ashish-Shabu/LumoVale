@@ -1,20 +1,20 @@
-const mongoClient= require('mongodb').MongoClient;
-const state= {
-    db: null
-};
-module.exports.connect= (callback) => {
-    const url = 'mongodb://127.0.0.1:27017/';
-    const dbname = 'Lumovale';
+// const mongoClient = require('mongodb').MongoClient;
 
-    mongoClient.connect(url,(err,data) => {
-        if(err) return callback(err);
-        state.db= data.db(dbname);
-        callback();
-    });
+// const state = {
+//   db: null
+// };
 
-    
-};
+// module.exports.connect = (callback) => {
+//   const url = 'mongodb+srv://LumovaleDB:bW3WCyLSQ7s6jUS4@cluster0.jlrnpnu.mongodb.net/Lumovale';
+//   const dbname = 'Lumovale';
 
-module.exports.get=function(){
-    return state.db;
-}
+//   mongoClient.connect(url, (err, data) => {
+//     if (err) return callback(err);
+//     state.db = data.db(dbname);
+//     callback(); 
+//   });
+// };
+
+// module.exports.get = function () {
+//   return state.db;
+// };

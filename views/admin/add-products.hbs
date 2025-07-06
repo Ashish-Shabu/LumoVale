@@ -21,8 +21,13 @@
 
                     <button type="submit" class="btn btn-success mt-4">Submit</button>
                 </form>
-                console.log(db.get())
+
             </div>
         </div>
     </div>
+    {{#if message}}
+    <script>alert("{{message}}");</script>
+    {{else}}
+    <script>alert("Error in adding product");</script>
+    {{/if}}
 </section>

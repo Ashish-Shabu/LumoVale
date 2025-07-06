@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "node ./bin/www",
+    "start-mongo": "mongod --dbpath C:\\data\\db"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
@@ -14,6 +15,8 @@
     "hbs": "^4.2.0",
     "http-errors": "~1.6.3",
     "mongodb": "^6.17.0",
+    "mongoose": "^8.16.1",
+    "mongose": "^0.0.2-security",
     "morgan": "~1.9.1",
     "promise": "^8.3.0"
   }
