@@ -1,0 +1,23 @@
+<section>
+    <div class="container mt-5">
+        <div class="row g-4"> <!-- g-4 adds spacing between cards -->
+            {{#each products}}
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex align-items-stretch">
+                <div class="card w-100">
+                    <img src="/product-images/{{this._id}}.jpg" class="card-img-top" alt="product image"
+                        style="height:15rem; object-fit: cover;" />
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">{{this.name}}</h5>
+                        <p class="card-text text-truncate-2">{{this.description}}</p>
+                        <p class="card-text mt-auto">Price: ₹{{this.price}}</p>
+                        <div style="display: flex; gap: 10px; margin-top: 10px;">
+                            <button class="btn btn-primary w-50">Add To Cart</button>
+                            <button class="btn btn-primary w-50">Buy Now</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {{/each}}
+        </div>
+    </div>
+</section>

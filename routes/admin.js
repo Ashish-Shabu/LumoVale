@@ -15,24 +15,47 @@ router.get('/', function (req, res, next) {
 });
 
 router.get('/add-products', function (req, res) {
-  res.render('admin/add-products')
-})
+  const message = req.query.added ? "Product added successfully" : null;
+  res.render('admin/add-products', { admin: true, successMessage: message });
+  console.log(message);
+});
+
 
 router.post('/add-products', (req, res) => {
-  console.log(req.body);
+  const { name, price, category, description } = req.body;
+
+  if (!name || !price || !category || !description || !req.files?.image) {
+    return res.render('admin/add-products', {
+      admin: true,
+      errorMessage: "All fields and image are required"
+    });
+  }
+
   productHelpers.addProduct(req.body).then((product) => {
-    let image = req.files?.image;
+    let image = req.files.image;
     const id = product._id.toString();
     const imagePath = path.join(__dirname, '../public/product-images', id + '.jpg');
+
     image.mv(imagePath, (err) => {
       if (!err) {
-
-        res.render('admin/add-products', { message: "Product added successfully"});
+        // 🔁 Redirect instead of render
+        res.redirect('/admin/add-products?added=true');
       } else {
-        console.log(err)
+        console.log(err);
+        res.render('admin/add-products', {
+          admin: true,
+          errorMessage: "Image upload failed"
+        });
       }
-    })
-  })
-})
+    });
+  }).catch((err) => {
+    console.log(err);
+    res.render('admin/add-products', {
+      admin: true,
+      errorMessage: "Failed to add product"
+    });
+  });
+});
+
 
 module.exports = router;

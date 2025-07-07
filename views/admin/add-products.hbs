@@ -5,19 +5,19 @@
                 <h2 class="text-center">Add Product</h2>
                 <form action="/admin/add-products" enctype="multipart/form-data" method="POST">
                     <label for="">Name</label>
-                    <input type="text" name="name" class="form-control">
+                    <input type="text" name="name" class="form-control" required>
 
                     <label for="">Category</label>
-                    <input type="text" name="category" class="form-control">
+                    <input type="text" name="category" class="form-control" required>
 
                     <label for="">Price</label>
-                    <input type="text" name="price" class="form-control">
+                    <input type="text" name="price" class="form-control" required>
 
                     <label for="">Description</label>
-                    <input type="text" name="description" class="form-control">
+                    <input type="text" name="description" class="form-control" required>
 
                     <label for="">Image</label>
-                    <input type="file" name="image" class="form-control">
+                    <input type="file" name="image" class="form-control" multiple required>
 
                     <button type="submit" class="btn btn-success mt-4">Submit</button>
                 </form>
@@ -25,9 +25,5 @@
             </div>
         </div>
     </div>
-    {{#if message}}
-    <script>alert("{{message}}");</script>
-    {{else}}
-    <script>alert("Error in adding product");</script>
-    {{/if}}
+   
 </section>
