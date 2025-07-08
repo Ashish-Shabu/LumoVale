@@ -6,6 +6,7 @@ var logger = require('morgan');
 const MONGO_URL = 'mongodb+srv://LumovaleDB:bW3WCyLSQ7s6jUS4@cluster0.jlrnpnu.mongodb.net/Lumovvale'
 var mongose = require('mongoose');
 const exphbs = require('express-handlebars');
+var session = require('express-session')
 
 
 var userRouter = require('./routes/user');
@@ -14,15 +15,6 @@ const { engine } = require('express-handlebars');
 
 var app = express();
 var fileUpload = require('express-fileupload');
-var db = require('./config/connection');
-
-// db.connect((err) => {
-//   if(err) {
-//     console.log("Connection Error" + err);
-//      process.exit(1);
-//   }
-//   else console.log("Database connected successfully");
-// });
 
 mongose.connect(MONGO_URL).then(() => {
   console.log("Database connected successfully");
@@ -50,6 +42,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(fileUpload());
+app.use(session({secret:"key" , cookie:{maxAge: null}}))
 
 
 app.use('/', userRouter);

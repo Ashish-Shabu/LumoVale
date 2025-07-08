@@ -23,6 +23,9 @@
                     <td>{{this.category}}</td>
                     <td>{{this.description}}</td>
                     <td><img style="width: 50px; height: 50px;" src="/product-images/{{this._id}}.jpg"></td>
+                    <td style="display: flex; gap: 10px; align-items: center; justify-content: center; fill: #000;">
+                        <a href="/admin/edit-product/{{this._id}}" ><i class="fa-solid fa-pen-to-square"></i></a>
+                        <a href="/admin/delete-product/{{this._id}}" ><i class="fa-solid fa-trash" style="color: #f20202;"></i></i></a>
                 </tr>
                 {{/each}}
             </tbody>
