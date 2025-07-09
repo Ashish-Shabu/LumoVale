@@ -3,6 +3,7 @@ var router = express.Router();
 var productHelpers = require('../helpers/product-helpers');
 var userHelpers = require('../helpers/user-helpers');
 const path = require('path');
+
 const isLoggedIn = (req, res, next) => {
   if (req.session.loggedIn) {
     next();
@@ -14,10 +15,14 @@ const isLoggedIn = (req, res, next) => {
 
 /* GET home page. */
 
-router.get('/', function (req, res, next) {
+router.get('/', async function (req, res, next) {
   let user = req.session.user;
+  let cartCount = 0;
+  if (req.session.user) {
+    cartCount = await userHelpers.getCartCount(req.session.user._id)
+  }
   productHelpers.getAllProducts().then((products) => {
-    res.render('user/view-products', { products, user });
+    res.render('user/view-products', { products, user, cartCount });
   })
 
 });
@@ -26,10 +31,10 @@ router.get('/', function (req, res, next) {
 router.get('/login', (req, res) => {
   if (req.session.loggedIn) {
     return res.redirect('/');
-  }else{
-    res.render('user/user-login',{LoginErr: req.session.loginErr})
+  } else {
+    res.render('user/user-login', { LoginErr: req.session.loginErr })
     req.session.loginErr = null;
-  } 
+  }
 });
 
 router.get('/signup', (req, res) => {
@@ -38,7 +43,9 @@ router.get('/signup', (req, res) => {
 
 router.post('/signup', (req, res) => {
   userHelpers.doSignup(req.body).then((response) => {
-    console.log(response);
+    req.session.loggedIn = true;
+    req.session.user = response.user;
+    res.redirect('/')
   })
 })
 
@@ -63,10 +70,31 @@ router.get('/logout', (req, res) => {
 
 
 
-router.get('/cart', isLoggedIn, (req, res) => {
+router.get('/cart', isLoggedIn, async (req, res) => {
+  let products = await userHelpers.getCartProducts(req.session.user._id)
+  const cartCount = await userHelpers.getCartCount(req.session.user._id);
 
-    res.render('user/cart')
+
+  console.log(products);
+  res.render('user/cart', { user: req.session.user, products,cartCount });
 })
+
+router.get('/add-to-cart/:id', isLoggedIn, async (req, res) => {
+  let productId = req.params.id;
+  let userId = req.session.user._id;
+
+  await userHelpers.addToCart(productId, userId);
+
+  const cartCount = await userHelpers.getCartCount(userId); // NEW FUNCTION
+  res.json({ status: true, cartCount });
+});
+
+router.post('/change-product-quantity', (req, res) => {
+  userHelpers.changeProductQuantity(req.body).then((response) => {
+    res.json(response);
+  });
+});
+
 
 
 
