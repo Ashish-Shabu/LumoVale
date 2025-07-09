@@ -8,7 +8,6 @@ const path = require('path');
 /* GET users listing. */
 router.get('/', function (req, res, next) {
   productHelpers.getAllProducts().then((products)=>{
-    console.log(products);
     res.render('admin/view-products', { admin: true, products});
   })
   
@@ -56,6 +55,38 @@ router.post('/add-products', (req, res) => {
     });
   });
 });
+
+router.get('/delete-product/:id' , (req, res) => {
+  let productId = req.params.id;
+  productHelpers.deleteProduct(productId).then(() => {
+    res.redirect('/admin');
+  })
+  .catch((err) => {
+    console.log(err);
+    res.render('admin/view-products', {
+      admin: true,
+      errorMessage: "Failed to delete product"
+    });
+  });
+})
+
+router.get('/edit-product/:id', async (req, res) => {
+  let product = await productHelpers.getProductDetails(req.params.id);
+  res.render('admin/edit-product', { admin: true, product });
+});
+
+router.post('/edit-products/:id', (req,res) => {
+  productHelpers.updateProduct(req.params.id ,req.body).then(() => {
+    let image = req.files?.image;
+    if (image) {
+      const id = req.params.id;
+      const imagePath = path.join(__dirname, '../public/product-images', id + '.jpg');
+
+      image.mv(imagePath)
+    res.redirect('/admin');
+    }
+  })
+})
 
 
 module.exports = router;
