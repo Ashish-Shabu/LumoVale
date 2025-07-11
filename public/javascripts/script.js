@@ -15,10 +15,9 @@ function addToCart(productId) {
 
 
 function changeQuantity(productId, userId, count) {
-    let quantityElement = document.getElementById(`quantity-${productId}`);
-    let currentQuantity = parseInt(quantityElement.value);
+    let quantityInput = document.getElementById(`quantity-${productId}`);
+    let currentQty = parseInt(quantityInput.value);
 
-    // Allow sending request to backend even if quantity is 1 and count is -1
     $.ajax({
         url: '/change-product-quantity',
         method: 'POST',
@@ -28,19 +27,39 @@ function changeQuantity(productId, userId, count) {
             count
         },
         success: (response) => {
-            if (response.status) {
-                if (response.removeProduct) {
-                    alert("Product removed from cart.");
-                    location.reload();
-                } else {
-                    quantityElement.value = currentQuantity + count;
+            if (response.removeProduct) {
+                location.reload(); // if quantity is 0, remove the item
+            } else {
+                // Update the quantity input value
+                quantityInput.value = currentQty + count;
 
+                // Update the subtotal for this product
+                const unitPrice = parseFloat(document.querySelector(`tr[data-product-id="${productId}"] .unit-price`).innerText);
+                const newQty = parseInt(document.getElementById(`quantity-${productId}`).value);
+                const newSubtotal = unitPrice * newQty;
 
+                // Update subtotal in cart view
+                document.getElementById(`subtotal-${productId}`).innerText = newSubtotal.toFixed(2);
+
+                // Update subtotal on card body as well
+                const subtotalDisplay = document.querySelector(`#quantity-${productId}`).closest('.row').querySelector('h5.mb-0');
+                if (subtotalDisplay) {
+                    subtotalDisplay.innerText = '₹' + newSubtotal.toFixed(2);
                 }
 
+                // Update overall total
+                updateCartTotal();
             }
         }
     });
+}
+
+function updateCartTotal() {
+    let total = 0;
+    document.querySelectorAll('.subtotal').forEach((el) => {
+        total += parseFloat(el.innerText);
+    });
+    document.getElementById('order-summary-total').innerText = total.toFixed(2);
 }
 
 function populateOrderSummary() {
@@ -59,6 +78,7 @@ function populateOrderSummary() {
     });
 
     document.getElementById("order-summary-total").innerText = total;
+    updateCartTotal();
 }
 
 

@@ -3,7 +3,8 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-const MONGO_URL = 'mongodb+srv://LumovaleDB:bW3WCyLSQ7s6jUS4@cluster0.jlrnpnu.mongodb.net/Lumovvale'
+require('dotenv').config();
+
 var mongose = require('mongoose');
 const exphbs = require('express-handlebars');
 var session = require('express-session')
@@ -16,7 +17,7 @@ const { engine } = require('express-handlebars');
 var app = express();
 var fileUpload = require('express-fileupload');
 
-mongose.connect(MONGO_URL).then(() => {
+mongose.connect(process.env.MONGO_URL).then(() => {
   console.log("Database connected successfully");
 }).catch((err) => {
   console.log("Connection Error: " + err);

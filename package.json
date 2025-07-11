@@ -10,6 +10,7 @@
     "bcrypt": "^6.0.0",
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
+    "dotenv": "^17.2.0",
     "express": "^4.21.2",
     "express-fileupload": "^1.5.2",
     "express-handlebars": "^8.0.1",
@@ -20,7 +21,8 @@
     "mongoose": "^8.16.1",
     "mongose": "^0.0.2-security",
     "morgan": "~1.9.1",
-    "promise": "^8.3.0"
+    "promise": "^8.3.0",
+    "razorpay": "^2.9.6"
   },
   "devDependencies": {
     "@types/node": "^24.0.10"

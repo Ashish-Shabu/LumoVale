@@ -1,0 +1,41 @@
+<section class="container py-5">
+    <h2 class="mb-4">My Orders</h2>
+
+    {{#if orders.length}}
+    {{#each orders}}
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="d-flex justify-content-between mb-2">
+                <h5>Order ID: {{_id}}</h5>
+                <small class="text-muted">{{date}}</small>
+            </div>
+            <p><strong>Payment:</strong> {{paymentMethod}} | <strong>Status:</strong> {{status}}</p>
+            <p><strong>Total Amount:</strong> ₹{{totalAmount}}</p>
+            <h6>Delivery Details:</h6>
+            <ul>
+                <li><strong>Name:</strong> {{deliveryDetails.name}}</li>
+                <li><strong>Phone:</strong> {{deliveryDetails.phoneNumber}}</li>
+                <li><strong>Address:</strong> {{deliveryDetails.address}} - {{deliveryDetails.zipcode}}</li>
+            </ul>
+            <h6>Products:</h6>
+            <div class="order-products-list">
+                {{#each products}}
+                <div class="order-product-item">
+                    <div class="order-product-left">
+                        <img src="/product-images/{{this.productId._id}}.jpg" alt="{{this.productId.name}}" class="order-product-img">
+                        <div class="order-product-name">{{this.productId.name}}</div>
+                    </div>
+                    <div class="order-product-right">
+                        <div>Price: ₹{{this.productId.price}}</div>
+                        <div>Quantity: {{this.quantity}}</div>
+                    </div>
+                </div>
+                {{/each}}
+            </div>
+        </div>
+    </div>
+    {{/each}}
+    {{else}}
+    <div class="alert alert-info">You have not placed any orders yet.</div>
+    {{/if}}
+</section>

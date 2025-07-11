@@ -1,9 +1,16 @@
 const { resolve } = require('path');
 const User = require('../models/User');
 const Cart = require('../models/Cart');
+const Order = require('../models/Order');
 const bcrypt = require('bcrypt');
 const { pipeline } = require('stream');
 const mongoose = require('mongoose');
+const Razorpay = require('razorpay');
+
+var instance = new Razorpay({
+    key_id: process.env.RAZORPAY_KEY_ID,
+    key_secret: process.env.RAZORPAY_KEY_SECRET,
+});
 
 
 module.exports = {
@@ -102,7 +109,8 @@ module.exports = {
                         _id: 0,
                         productId: "$products.productId",
                         quantity: "$products.quantity",
-                        product: "$productDetails"
+                        product: "$productDetails",
+                        subtotal: { $multiply: ["$products.quantity", "$productDetails.price"] }
                     }
                 }
             ]);
@@ -145,9 +153,101 @@ module.exports = {
                 resolve({ status: false });
             }
         });
+    },
+
+    getCartProductList: (userId) => {
+        return new Promise(async (resolve, reject) => {
+            let cart = await Cart.findOne({ userId });
+
+            resolve(cart.products)
+        })
+    },
+
+    placeOrder: (orderData, products, total) => {
+        return new Promise(async (resolve, reject) => {
+            let status = orderData.paymentMethod === 'Cash on Delivery' ? 'placed' : 'pending';
+            let orderObj = {
+                deliveryDetails: {
+                    name: orderData.billingName,
+                    address: orderData.billingAddress,
+                    zipcode: orderData.zipCode,
+                    phoneNumber: orderData.billingPhone
+                },
+                userId: orderData.userId,
+                products: products,
+                paymentMethod: orderData.paymentMethod,
+                status: orderData.paymentMethod === 'Cash on Delivery' ? 'Placed' : 'Pending',
+                totalAmount: total,
+                date: new Date()
+            };
+
+            const order = new Order(orderObj);
+            await order.save().then((response) => {
+                // Clear the cart after placing the order
+                Cart.deleteOne({ userId: orderData.userId }).then(() => {
+                    resolve(response._id);
+                })
+
+            })
+
+
+        });
+    },
+
+    getUserOrders: (userId) => {
+        return new Promise(async (resolve, reject) => {
+            let orders = await Order.find({ userId: new mongoose.Types.ObjectId(userId) })
+                .populate('products.productId')
+                .sort({ date: -1 });
+
+            resolve(orders);
+        });
+    },
+
+    generateRazorpay: (orderId, total) => {
+        return new Promise((resolve, reject) => {
+            instance.orders.create({
+                amount: total*100,
+                currency: "INR",
+                receipt: orderId,
+            }).then((order) => {
+                console.log("New order: ", order);
+                resolve(order);
+            }).catch((err) => {
+                reject(err);
+            });
+        })
+    },
+
+    verifypayment: (details) => {
+        return new Promise((resolve, reject) => {
+            const {
+                createHmac,
+            } = require('node:crypto');
+            const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = details.payment;
+            const hmac = createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
+                .update(razorpay_order_id + '|' + razorpay_payment_id)
+                .digest('hex');
+
+            if (hmac === razorpay_signature) {
+                resolve();
+            } else {
+                reject();
+            }
+
+        })
+    },
+    changePaymentStatus: (orderId) => {
+        return new Promise(async (resolve, reject) => {
+            await Order.updateOne({ _id: orderId }, { $set: { status: 'Placed' } })
+                .then(() => {
+                    resolve();
+                })
+        })
     }
-
-
-
 }
+
+
+
+
 
