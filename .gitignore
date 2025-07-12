@@ -1,4 +1,5 @@
 .env
 .vscode/
 node_modules/
-public\product-images
+public/product-images/
+
