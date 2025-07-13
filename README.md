@@ -164,6 +164,3 @@ If you encounter any issues or have questions:
 3. Verify all environment variables are set correctly
 4. Check that all dependencies are installed
 
-
-
-**Note**: This is a development version. For production deployment, ensure proper security measures, SSL certificates, and environment-specific configurations are in place. 
