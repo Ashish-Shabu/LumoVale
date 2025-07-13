@@ -1,4 +1,5 @@
-# Ecommerce Website
+# LumoVale 
+Ecommerce Website
 
 A full-stack ecommerce web application built with Node.js, Express.js, MongoDB, and Handlebars templating engine. This application provides a complete online shopping experience with user authentication, product management, shopping cart functionality, and payment integration.
 
